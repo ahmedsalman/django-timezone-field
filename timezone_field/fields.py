@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import six
 
 from timezone_field.utils import is_pytz_instance
+from .choices import PRETTY_ALL_TIMEZONES_CHOICES
 
 
 class TimeZoneFieldBase(models.Field):
@@ -36,7 +37,16 @@ class TimeZoneFieldBase(models.Field):
 
     # NOTE: these defaults are excluded from migrations. If these are changed,
     #       existing migration files will need to be accomodated.
+    timezone_dict_with_utc_stamp = dict(PRETTY_ALL_TIMEZONES_CHOICES)
     CHOICES = [(tz, tz) for tz in pytz.common_timezones]
+    CHOICES = []
+    
+    for tz in pytz.common_timezones:
+        try:
+            CHOICES.append((tz, timezone_dict_with_utc_stamp[tz]))
+        except KeyError:
+            pass
+
     MAX_LENGTH = 63
 
     def __init__(self, **kwargs):
@@ -45,6 +55,7 @@ class TimeZoneFieldBase(models.Field):
             'choices': TimeZoneField.CHOICES,
         }
         parent_kwargs.update(kwargs)
+
         super(TimeZoneFieldBase, self).__init__(**parent_kwargs)
 
         # We expect choices in form [<str>, <str>], but we
