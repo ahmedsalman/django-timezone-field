@@ -45,9 +45,9 @@ def get_choices(timezones, grouped=False):
 
         if not grouped:
             # Format the timezone display string
-            display_string = '({timezone_offset_string}) {tz}'.format(
-                timezone_offset_string=timezone_offset_string,
+            display_string = '{tz} ({timezone_offset_string})'.format(
                 tz=tz,
+                timezone_offset_string=timezone_offset_string,
             )
         else:
             display_string = tz
